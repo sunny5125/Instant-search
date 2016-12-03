@@ -3,14 +3,12 @@
 *.ap_
 !gradle/wrapper/gradle-wrapper.jar
 
+
 # Files for the ART/Dalvik VM
 *.dex
 
 # Java class files
 *.class
-
-# Crashlytics configuations
-com_crashlytics_export_strings.xml
 
 # Generated files
 bin/
@@ -44,6 +42,7 @@ captures/
 
 # lint folder
 lint
+
 
 # Keystore files
 *.jks
