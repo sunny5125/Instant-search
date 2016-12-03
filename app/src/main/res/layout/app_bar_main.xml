@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="sanna.z.MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+
+              <FrameLayout
+                   android:id="@+id/main_framelayout_title"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_gravity="bottom|center_horizontal"
+                   android:background="@color/colorPrimary"
+                   android:orientation="vertical"
+                   app:layout_collapseMode="parallax"
+                   app:layout_collapseParallaxMultiplier="0.6"
+                   app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                   android:layout_marginTop="60sp"
+                   >
+
+                      <LinearLayout
+                           android:id="@+id/main.linearlayout.title"
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent"
+                           android:layout_gravity="center"
+                           android:orientation="vertical"
+                           app:layout_collapseMode="parallax">
+
+                           <EditText
+                               android:id="@+id/editText"
+                               android:layout_width="250sp"
+                               android:layout_height="wrap_content"
+                               android:layout_gravity="center_horizontal"
+                               android:gravity="bottom|center"
+                               android:hint="@string/search"
+                               android:maxLines="1"
+                               android:textColor="@android:color/white"
+                               android:textSize="20sp"
+                               android:background="@drawable/bg_form_rounded" />
+
+                          <GridLayout
+                              android:id="@+id/GridLayout1"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_gravity="center_horizontal|bottom"
+                              android:columnCount="3"
+                              android:gravity="bottom|center"
+                              android:orientation="horizontal"
+                              android:rowCount="2"
+                              tools:context=".GridXMLActivity">
+
+                              <CheckBox
+                                  android:id="@+id/checkBox"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:checked="true"
+                                  android:text="@string/all" />
+
+                              <CheckBox
+                                  android:id="@+id/checkBox2"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="@string/video" />
+
+                              <CheckBox
+                                  android:id="@+id/checkBox3"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="@string/music" />
+
+                              <CheckBox
+                                  android:id="@+id/checkBox4"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="@string/book" />
+
+                              <CheckBox
+                                  android:id="@+id/checkBox5"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="@string/compressed" />
+                          </GridLayout>
+                      </LinearLayout>
+                   </FrameLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_main" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+
+</android.support.design.widget.CoordinatorLayout>

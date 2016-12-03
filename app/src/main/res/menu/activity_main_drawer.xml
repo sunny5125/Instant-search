@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_helpus"
+            android:icon="@drawable/help_improve"
+            android:title="Help us improve" />
+        <item
+            android:id="@+id/nav_rate"
+            android:icon="@drawable/thumb_up"
+            android:title="Rate us" />
+        <item
+            android:id="@+id/nav_like"
+            android:icon="@drawable/facebook"
+            android:title="Like us" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Tell your friends" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>
