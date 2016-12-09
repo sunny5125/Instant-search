@@ -6,6 +6,8 @@ import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,11 +49,18 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.github.pwittchen.reactivenetwork.library.Connectivity;
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
+
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.FeedbackManager;
 import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateManager;
 import net.hockeyapp.android.metrics.MetricsManager;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import static sanna.z.R.id.webview;
 
@@ -160,6 +169,30 @@ public class MainActivity extends AppCompatActivity
         checkForCrashes();
         FeedbackManager.register(this);
         MetricsManager.register(this, getApplication());
+
+        //Internet Connectivity Check
+        ReactiveNetwork.observeNetworkConnectivity(getApplicationContext())
+                .subscribeOn(Schedulers.io())
+                .filter(Connectivity.hasState(NetworkInfo.State.CONNECTED))
+                .filter(Connectivity.hasType(ConnectivityManager.TYPE_WIFI))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Connectivity>() {
+                    @Override public void call(Connectivity connectivity) {
+                        // do something
+                        Snackbar.make(coordinatorLayout,"Internet Available",Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+        ReactiveNetwork.observeNetworkConnectivity(getApplicationContext())
+                .subscribeOn(Schedulers.io())
+                .filter(Connectivity.hasState(NetworkInfo.State.CONNECTED))
+                .filter(Connectivity.hasType(ConnectivityManager.TYPE_MOBILE))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Connectivity>() {
+                    @Override public void call(Connectivity connectivity) {
+                        // do something
+                        Snackbar.make(coordinatorLayout,"Internet Available",Snackbar.LENGTH_SHORT).show();
+                    }
+                });
     }
     private void checkForCrashes() {
         CrashManager.register(this);
@@ -190,6 +223,7 @@ public class MainActivity extends AppCompatActivity
         Tracking.startUsage(this);
 
     }
+
     @Override
     public void onPause() {
         Tracking.stopUsage(this);
@@ -365,7 +399,7 @@ public class MainActivity extends AppCompatActivity
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Snackbar.make(coordinatorLayout,"Permission Granted!",Snackbar.LENGTH_SHORT).show();    
+                        Snackbar.make(coordinatorLayout,"Permission Granted!",Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(coordinatorLayout,"Permission Denied!",Snackbar.LENGTH_SHORT).show();
                                   }
