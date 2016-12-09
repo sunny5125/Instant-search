@@ -1,17 +1,26 @@
 package sanna.z;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.DownloadManager;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.RecoverySystem;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +33,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
@@ -33,6 +44,7 @@ import android.webkit.WebViewClient;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import net.hockeyapp.android.CrashManager;
@@ -45,9 +57,11 @@ import static sanna.z.R.id.webview;
 
 
 public class MainActivity extends AppCompatActivity
-                            implements NavigationView.OnNavigationItemSelectedListener,
+                             implements NavigationView.OnNavigationItemSelectedListener,
                                         AppBarLayout.OnOffsetChangedListener,
-                                        View.OnClickListener {
+                                        View.OnClickListener,
+                                        SwipeRefreshLayout.OnRefreshListener,
+                                        MyWebChromeClient.ProgressListener {
     FloatingActionButton fab;
     EditText search;
     CheckBox all,music,video,compressed,book;
@@ -57,7 +71,13 @@ public class MainActivity extends AppCompatActivity
     String urlFinal,extension;
     AppBarLayout appBarLayout;
     public WebView webView;
+    public static ProgressBar pbar;
+    SwipeRefreshLayout swipeLayout;
+    CoordinatorLayout coordinatorLayout;
+    private static final int PERMISSION_ALL = 1;
+    String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
+    @TargetApi(Build.VERSION_CODES.M)
     @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +94,20 @@ public class MainActivity extends AppCompatActivity
         book = (CheckBox)findViewById(R.id.checkBox4);
         compressed = (CheckBox)findViewById(R.id.checkBox5);
         webView = (WebView)findViewById(webview);
+        pbar = (ProgressBar)findViewById(R.id.progressBar);
+        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinate_layout);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!checkPermissions(this, PERMISSIONS)) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+            }
+        }
+
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent,getTheme()),
+                getResources().getColor(R.color.colorPrimary,getTheme()),
+                        getResources().getColor(R.color.colorPrimaryDark,getTheme()));
+
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
@@ -99,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         webView.getSettings().setDisplayZoomControls(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.setWebViewClient(new MyWebViewClient());
-        webView.setWebChromeClient(new MyWebChromeClient());
+        webView.setWebChromeClient(new MyWebChromeClient(this));
         webView.setDownloadListener(new DownloadListener() {
                                         @Override
                                         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
@@ -139,12 +173,22 @@ public class MainActivity extends AppCompatActivity
     private void unregisterManagers() {
         UpdateManager.unregister();
     }
+
+    @Override
+    public void onRefresh() {
+        webView.reload();
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+                swipeLayout.setRefreshing(false);
+            }
+        }, 5000);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         Tracking.startUsage(this);
-        // Further statements
-        // ...
+
     }
     @Override
     public void onPause() {
@@ -184,7 +228,6 @@ public class MainActivity extends AppCompatActivity
             }, 2000);
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -305,6 +348,40 @@ public class MainActivity extends AppCompatActivity
         return search_url;
     }
 
+    private boolean checkPermissions(Context context, String[] permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_ALL: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Snackbar.make(coordinatorLayout,"Permission Granted!",Snackbar.LENGTH_SHORT).show();    
+                } else {
+                    Snackbar.make(coordinatorLayout,"Permission Denied!",Snackbar.LENGTH_SHORT).show();
+                                  }
+                return;
+            }
 
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    @Override
+    public void onUpdateProgress(int progressValue) {
+        pbar.setProgress(progressValue);
+        if (progressValue == 100) {
+            pbar.setVisibility(View.INVISIBLE);
+        }
+    }
 }
