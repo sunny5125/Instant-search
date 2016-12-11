@@ -51,6 +51,9 @@ import android.widget.Toast;
 
 import com.github.pwittchen.reactivenetwork.library.Connectivity;
 import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.FeedbackManager;
@@ -62,6 +65,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+import static android.R.attr.name;
 import static sanna.z.R.id.webview;
 
 
@@ -85,6 +89,8 @@ public class MainActivity extends AppCompatActivity
     CoordinatorLayout coordinatorLayout;
     private static final int PERMISSION_ALL = 1;
     String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private Tracker mTracker;
+    private static final String TAG = "MainActivity_z";
 
     @TargetApi(Build.VERSION_CODES.M)
     @SuppressLint("JavascriptInterface")
@@ -193,6 +199,13 @@ public class MainActivity extends AppCompatActivity
                         Snackbar.make(coordinatorLayout,"Internet Available",Snackbar.LENGTH_SHORT).show();
                     }
                 });
+
+        //Google Analytics
+        //Get a Tracker (should auto-report)
+        ((AnalyticsApplication) getApplication()).getTracker(AnalyticsApplication.TrackerName.APP_TRACKER);
+
+        //Get an Analytics tracker to report app starts & uncaught exceptions etc.
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
     private void checkForCrashes() {
         CrashManager.register(this);
@@ -219,8 +232,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        super.onResume();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
         Tracking.startUsage(this);
+        super.onResume();
 
     }
 
@@ -233,8 +247,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        //Stop the analytics tracking
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
         unregisterManagers();
+        super.onDestroy();
     }
 
     @Override

@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "501269149799",
+    "project_id": "firebase-instant-search"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501269149799:android:bebc8e3d7f385bc6",
+        "android_client_info": {
+          "package_name": "sanna.z"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLuPxEtFIvSClos7mHdt7GckKcsgmLIrU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-88740987-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
