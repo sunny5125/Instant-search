@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity
         //Google Analytics
         //Get a Tracker (should auto-report)
         ((AnalyticsApplication) getApplication()).getTracker(AnalyticsApplication.TrackerName.APP_TRACKER);
-
+        Log.v("Analytics","check3");
         //Get an Analytics tracker to report app starts & uncaught exceptions etc.
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }

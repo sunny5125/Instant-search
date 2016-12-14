@@ -1,6 +1,7 @@
 package sanna.z;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -29,11 +30,13 @@ public class AnalyticsApplication extends Application {
 
     public AnalyticsApplication() {
         super();
+        Log.v("Analytics","check");
     }
 
     synchronized Tracker getTracker(TrackerName trackerId) {
+        Log.v("Analytics","check1");
         if (!mTrackers.containsKey(trackerId)) {
-
+            Log.v("Analytics","check2");
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(R.xml.app_tracker)
                     : (trackerId == TrackerName.GLOBAL_TRACKER) ? analytics.newTracker(PROPERTY_ID)
